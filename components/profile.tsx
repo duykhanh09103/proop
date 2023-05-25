@@ -4,7 +4,7 @@ import { PROFILE_TAG, PROGRAM_ID } from '@/configs/program'
 import useLoadProgram from '@/hooks/useLoadProgram'
 import { Profile } from '@/types/profile'
 import * as anchor from '@project-serum/anchor'
-import { useConnection } from '@solana/wallet-adapter-react'
+import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useState } from 'react'
 import Bio from './bio'
@@ -13,25 +13,23 @@ import { Social } from './social'
 import SocialInput from './social-input'
 
 type ProfileProps = {
-  // publicKey: PublicKey
   wallet: string
-  disconnect?: () => Promise<void>
   isGuest: boolean
 }
 
-export default function Profile({ isGuest, wallet, disconnect }: ProfileProps) {
-  const { connection } = useConnection()
-
+export default function Profile({ isGuest, wallet }: ProfileProps) {
   const [openModal, setOpenModal] = useState(false)
-  const [facebook, setFacebook] = useState('https://www.facebook.com')
-  const [profile, setProfile] = useState<Profile | undefined>()
   const [loading, setLoading] = useState(false)
-  const [name, setName] = useState('')
-  const [isProfileExist, setIsProfileExist] = useState(false)
   const publicKey = useMemo(() => new PublicKey(wallet), [wallet])
 
-  const { program: profaiProgram, programID } = useLoadProgram(connection, PROGRAM_ID)
+  const [isProfileExist, setIsProfileExist] = useState(false)
+  const [profile, setProfile] = useState<Profile | undefined>()
+  const [name, setName] = useState('rand0mName')
+  const [facebook, setFacebook] = useState('https://www.facebook.com')
 
+  const { connection } = useConnection()
+  const { program: profaiProgram, programID } = useLoadProgram(connection, PROGRAM_ID)
+  const { disconnect } = useWallet()
   const [profilePDA] = useMemo(
     () =>
       anchor.web3.PublicKey.findProgramAddressSync(
@@ -44,9 +42,10 @@ export default function Profile({ isGuest, wallet, disconnect }: ProfileProps) {
   useEffect(() => {
     getProfile()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profaiProgram, publicKey])
+  }, [profaiProgram, publicKey, wallet])
 
   const getProfile = async () => {
+    // if (!anchorWallet) setVisible(true)
     if (!profaiProgram || !publicKey) return
 
     try {
@@ -84,7 +83,7 @@ export default function Profile({ isGuest, wallet, disconnect }: ProfileProps) {
       setLoading(true)
 
       const tx = await profaiProgram.methods
-        .init('sh', 'https://www.facebook.com/vietcetera/')
+        .init(name, facebook)
         .accounts({
           profile: profilePDA,
           systemProgram: anchor.web3.SystemProgram.programId,

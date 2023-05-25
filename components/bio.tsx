@@ -45,7 +45,7 @@ export default function Bio({
 
   return (
     <>
-      <div className='absolute w-full h-[200px] bg-red-200 rounded-b-xl overflow-hidden'>
+      <div className='absolute w-full h-[200px] rounded-b-xl overflow-hidden'>
         <canvas id='gradient-canvas' data-transition-in />
       </div>
       <div className='w-full mt-36 flex items-center flex-col gap-3'>

@@ -29,6 +29,9 @@ export default function ProfileModal({
           </button>
           <h3 className='text-lg font-bold select-none'>{title}</h3>
           <div className='form-control w-full gap-2'>{children}</div>
+          <p className='py-4 text-neutral-content text-sm'>
+            If you leave some fields empty, it&apos;s will use the default value
+          </p>
           <div className='modal-action'>
             <button className='btn btn-ghost' onClick={() => setOpenModal(false)}>
               Not now

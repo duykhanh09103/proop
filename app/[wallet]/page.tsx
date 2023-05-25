@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const wallet = params.wallet
 
   return {
-    title: `Profai | ${wallet}`,
+    title: `Proop | ${wallet}`,
   }
 }
 
